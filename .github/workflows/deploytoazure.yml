@@ -43,7 +43,7 @@ jobs:
       # Name of the Azure Web App
         app-name: ${{env.koyagithubdeploydemo}} 
         # Applies to Web Apps(Windows and Linux) and Web App Containers(linux). Multi container scenario not supported. Publish profile (*.publishsettings) file contents with Web Deploy secrets
-        publish-profile: ${{secret.AZURE_WEB_APP_PUBLISH_PROFILE}} # optional
+        publish-profile: ${{secrets.AZURE_WEB_APP_PUBLISH_PROFILE}} # optional
         # Enter an existing Slot other than the Production slot
         slot-name: 'development'
         # optional, default is production
