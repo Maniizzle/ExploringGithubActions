@@ -1,5 +1,10 @@
 name: Github Actions Demo
 on: 
+  #trigger by api calls
+  repository_dispatch:
+    types: [run_my_workflow]
+    
+  #manual triggers with parameters
   workflow_dispatch:
     inputs:
       name:
@@ -10,6 +15,8 @@ on:
         description: Deploy code after build(yes/no)'
         required: false
         default: 'yes'
+        
+  #github event triggers
   push:
     branches: [ "main" ]
 jobs: 
