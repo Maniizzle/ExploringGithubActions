@@ -1,6 +1,6 @@
 name: Github Actions Demo
 on: 
-  #trigger by api calls
+  #trigger by external events(api) with event_types
   repository_dispatch:
     types: [run_my_workflow]
     
