@@ -49,7 +49,7 @@ jobs:
         working-directory: DotnetWebApp
 
     if: github.ref == 'refs/heads/Container'
-    needs: build-deploy-image
+    needs: Build-Deploy_Image
         
     #env:
       #NAMESPACE: dummy
