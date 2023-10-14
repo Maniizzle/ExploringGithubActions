@@ -1,8 +1,8 @@
 name: 'Deploy to Azure Container'
 
-  env:
-    ACR_LOGIN_SERVER: ${{ secrets.ACR_NAME }}.azurecr.io
-    IMAGE_NAME:  ${{ secrets.ACR_NAME }}.azurecr.io/webapp:${{ github.sha }}
+env:
+  ACR_LOGIN_SERVER: ${{ secrets.ACR_NAME }}.azurecr.io
+  IMAGE_NAME:  ${{ secrets.ACR_NAME }}.azurecr.io/webapp:${{ github.sha }}
 
 on:
   push:
@@ -23,13 +23,69 @@ on:
 jobs: 
   Build-Deploy_Image:
     name: Exploring Github Actions with Azure Container
+    defaults:
+      run:
+        working-directory: DotnetWebApp
     runs-on: ubuntu-latest
     steps:
 
     - name: Checkout Repo
-    - uses: actions/checkout@v3
+      uses: actions/checkout@v3
 
     - name: setup docker
-    - uses: azure/docker-login@v1
+      uses: azure/docker-login@v1
+      with:
+        login: ${{env.ACR_LOGIN_SERVER }}
+        username: ${{secrets.AZURE_SP_ID }}
+        password: ${{secrets.AZURE_SP_PASSWORD }}
+    
 
-uses: 
+
+  deploy-to-aks:
+    
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: DotnetWebApp
+
+    if: github.ref == 'refs/heads/Container'
+    needs: build-deploy-image
+        
+    #env:
+      #NAMESPACE: dummy
+    
+    steps:
+    
+    - uses: actions/checkout@main
+    
+    # Set the target Azure Kubernetes Service (AKS) cluster. 
+    - uses: azure/aks-set-context@v1
+      with:
+        creds: '${{ secrets.AZURE_CREDENTIALS }}'
+        cluster-name: ${{ secrets.AKS_NAME }}
+        resource-group: ${{ secrets.AKS_RESOURCE_GROUP }}
+  
+    # Create namespace if doesn't exist
+    # - run: |
+    #    kubectl create namespace ${{ env.NAMESPACE }} --dry-run -o json | kubectl apply -f -
+  
+    # Create image pull secret for ACR
+    - uses: azure/k8s-create-secret@v1
+      with:
+        container-registry-url: ${{ env.ACR_LOGIN_SERVER }}
+        container-registry-username: ${{ secrets.AZURE_SP_ID }}
+        container-registry-password: ${{ secrets.AZURE_SP_PASSWORD }}
+        secret-name: ${{ secrets.AKS_SECRET }}
+        # namespace: ${{ env.NAMESPACE }}
+  
+    # Deploy app to AKS
+    - uses: azure/k8s-deploy@v1
+      with:
+        manifests: |
+          manifests/deployment.yml
+          manifests/service.yml
+        images: |
+          ${{ env.IMAGE_NAME }}
+        imagepullsecrets: |
+          ${{ secrets.AKS_SECRET }}
+        #namespace: ${{ env.NAMESPACE }}
