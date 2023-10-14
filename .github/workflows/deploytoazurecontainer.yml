@@ -36,8 +36,8 @@ jobs:
       uses: azure/docker-login@v1
       with:
         login-server: ${{env.ACR_LOGIN_SERVER }}
-        username: ${{secrets.AZURE_SP_ID }}
-        password: ${{secrets.AZURE_SP_PASSWORD }}
+        username: ${{ secrets.AZURE_SP_ID }}
+        password: ${{ secrets.AZURE_SP_SECRET }}
     
 
 
@@ -74,7 +74,7 @@ jobs:
       with:
         container-registry-url: ${{ env.ACR_LOGIN_SERVER }}
         container-registry-username: ${{ secrets.AZURE_SP_ID }}
-        container-registry-password: ${{ secrets.AZURE_SP_PASSWORD }}
+        container-registry-password: ${{ secrets.AZURE_SP_SECRET }}
         secret-name: ${{ secrets.AKS_SECRET }}
         # namespace: ${{ env.NAMESPACE }}
   
