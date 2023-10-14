@@ -1,5 +1,22 @@
 name: Github Actions Demo
 on: 
+  #trigger by external events(api) with event_types declared
+  repository_dispatch:
+    types: [run_my_workflow]
+    
+  #manual triggers with parameters
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Enter the Name'
+        required: true
+        default: 'Github User'
+      deploy:
+        description: Deploy code after build(yes/no)'
+        required: false
+        default: 'yes'
+        
+  #github event triggers
   push:
     branches: [ "main" ]
 jobs: 
@@ -10,6 +27,10 @@ jobs:
       # Display the event that triggered the workflow
       - run: echo "The job was triggered by a ${{ github.event_name }} event."
       
+      # Passed parameter
+      - run: echo "Name ${{ github.event.inputs.name }}"
+      - run: echo "Deploy code - ${{ github.event.inputs.deploy }}"
+ 
       # Runner information
       - run: echo "This job is now running on a ${{ runner.os }} server hosted by GitHub"
       
