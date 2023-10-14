@@ -53,8 +53,9 @@ jobs:
     if: github.ref == 'refs/heads/Container'
     needs: Build-Deploy-Image
         
-    #env:
-      #NAMESPACE: dummy
+    environments: STAGING
+    env:
+      NAMESPACE: koya
     
     steps:
     
@@ -68,8 +69,8 @@ jobs:
         resource-group: ${{ secrets.AKS_RESOURCE_GROUP }}
   
     # Create namespace if doesn't exist
-    # - run: |
-    #    kubectl create namespace ${{ env.NAMESPACE }} --dry-run -o json | kubectl apply -f -
+    - run: |
+        kubectl create namespace ${{ env.NAMESPACE }} --dry-run -o json | kubectl apply -f -
   
     # Create image pull secret for ACR
     - uses: azure/k8s-create-secret@v1
@@ -88,6 +89,7 @@ jobs:
           manifests/service.yaml
         images: |
           ${{ env.IMAGE_NAME }}
+        namespace: ${{ env.NAMESPACE }}
         imagepullsecrets: |
           ${{ secrets.AKS_SECRET }}
         #namespace: ${{ env.NAMESPACE }}
