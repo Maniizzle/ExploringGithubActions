@@ -21,8 +21,8 @@ on:
 
   
 jobs: 
-  Build-Deploy_Image:
-    name: Exploring Github Actions with Azure Container
+  Build-Deploy-Image:
+    name: Deploy Image ACR
     defaults:
       run:
         working-directory: DotnetWebApp
@@ -35,7 +35,7 @@ jobs:
     - name: setup docker
       uses: azure/docker-login@v1
       with:
-        login: ${{env.ACR_LOGIN_SERVER }}
+        login-server: ${{env.ACR_LOGIN_SERVER }}
         username: ${{secrets.AZURE_SP_ID }}
         password: ${{secrets.AZURE_SP_PASSWORD }}
     
@@ -49,7 +49,7 @@ jobs:
         working-directory: DotnetWebApp
 
     if: github.ref == 'refs/heads/Container'
-    needs: Build-Deploy_Image
+    needs: Build-Deploy-Image
         
     #env:
       #NAMESPACE: dummy
