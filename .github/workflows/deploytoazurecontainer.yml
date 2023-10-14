@@ -1,5 +1,9 @@
 name: 'Deploy to Azure Container'
 
+  env:
+    ACR_LOGIN_SERVER: ${{ secrets.ACR_NAME }}.azurecr.io
+    IMAGE_NAME:  ${{ secrets.ACR_NAME }}.azurecr.io/webapp:${{ github.sha }}
+
 on:
   push:
     branches: [ "Container" ]
@@ -14,9 +18,7 @@ on:
         description: Deploy container after build(yes/no)'
         required: false
         default: 'yes'
-  env:
-    ACR_LOGIN_SERVER: ${{ secrets.ACR_NAME }}.azurecr.io
-    IMAGE_NAME:  ${{ secrets.ACR_NAME }}.azurecr.io/webapp:${{ github.sha }}
+
   
 jobs: 
   Build-Deploy_Image:
