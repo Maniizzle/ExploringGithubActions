@@ -1,0 +1,33 @@
+name: 'Deploy to Azure Container'
+
+on:
+  push:
+    branches: [ "Container" ]
+
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Enter the Name'
+        required: true
+        default: 'Github User'
+      deploy:
+        description: Deploy container after build(yes/no)'
+        required: false
+        default: 'yes'
+  env:
+    ACR_LOGIN_SERVER: ${{ secrets.ACR_NAME }}.azurecr.io
+    IMAGE_NAME:  ${{ secrets.ACR_NAME }}.azurecr.io/webapp:${{ github.sha }}
+  
+jobs: 
+  Build-Deploy_Image:
+    name: Exploring Github Actions with Azure Container
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout Repo
+    - uses: actions/checkout@v3
+
+    - name: setup docker
+    - uses: azure/docker-login@v1
+
+uses: 
